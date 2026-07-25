@@ -2,6 +2,7 @@ import * as home from './home.js';
 import * as gym from './gym.js';
 import * as bike from './bike.js';
 import * as hometrack from './hometrack.js';
+import * as history from './history.js';
 import * as badge from './badge.js';
 
 const SCREENS = {
@@ -9,6 +10,7 @@ const SCREENS = {
   '#gym': { id: 'screen-gym', title: 'ジム記録', module: gym, showBack: true },
   '#bike': { id: 'screen-bike', title: '自転車記録', module: bike, showBack: true },
   '#hometrack': { id: 'screen-hometrack', title: '家トレ記録', module: hometrack, showBack: true },
+  '#history': { id: 'screen-history', title: '記録履歴', module: history, showBack: true },
 };
 
 function router() {

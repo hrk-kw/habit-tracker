@@ -1,4 +1,4 @@
-const CACHE_NAME = 'habit-tracker-v1';
+const CACHE_NAME = 'habit-tracker-v2';
 
 const PRECACHE_URLS = [
   './',
@@ -13,6 +13,7 @@ const PRECACHE_URLS = [
   './js/gym.js',
   './js/bike.js',
   './js/hometrack.js',
+  './js/history.js',
   './js/badge.js',
   './icons/icon-192.png',
   './icons/icon-512.png',

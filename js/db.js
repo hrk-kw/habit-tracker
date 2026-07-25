@@ -61,6 +61,49 @@ export async function addSession(session) {
   return id;
 }
 
+export async function getSetLogsByExercise(exerciseId, limit) {
+  const db = await openDb();
+  const tx = db.transaction('setLogs', 'readonly');
+  const index = tx.objectStore('setLogs').index('exercise_id');
+
+  return new Promise((resolve, reject) => {
+    const results = [];
+    const cursorReq = index.openCursor(IDBKeyRange.only(exerciseId), 'prev');
+    cursorReq.onsuccess = () => {
+      const cursor = cursorReq.result;
+      if (!cursor || results.length >= limit) {
+        resolve(results);
+        return;
+      }
+      results.push(cursor.value);
+      cursor.continue();
+    };
+    cursorReq.onerror = () => reject(cursorReq.error);
+  });
+}
+
+export async function getRecentSessions(type, limit) {
+  const db = await openDb();
+  const tx = db.transaction('sessions', 'readonly');
+  const index = tx.objectStore('sessions').index('type_date');
+  const range = IDBKeyRange.bound([type, '0000-00-00'], [type, '9999-99-99']);
+
+  return new Promise((resolve, reject) => {
+    const results = [];
+    const cursorReq = index.openCursor(range, 'prev');
+    cursorReq.onsuccess = () => {
+      const cursor = cursorReq.result;
+      if (!cursor || results.length >= limit) {
+        resolve(results);
+        return;
+      }
+      results.push(cursor.value);
+      cursor.continue();
+    };
+    cursorReq.onerror = () => reject(cursorReq.error);
+  });
+}
+
 export async function getLatestSessionDate(type) {
   const db = await openDb();
   const tx = db.transaction('sessions', 'readonly');
