@@ -1,4 +1,5 @@
 import { getExercisesByCategory, saveSetSession } from './db.js';
+import { EXERCISE_DESCRIPTION_MAP } from './config.js';
 import { todayStr } from './util.js';
 import * as badge from './badge.js';
 
@@ -76,6 +77,16 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
     closeEditor();
   }
 
+  function openInfoModal(exercise) {
+    document.getElementById('exercise-info-title').textContent = exercise.name;
+    document.getElementById('exercise-info-body').textContent = EXERCISE_DESCRIPTION_MAP[exercise.name] ?? '';
+    document.getElementById('exercise-info-modal-overlay').classList.add('active');
+  }
+
+  function closeInfoModal() {
+    document.getElementById('exercise-info-modal-overlay').classList.remove('active');
+  }
+
   function decrementEditorCount() {
     if (editingExerciseId === null) return;
     const existing = pendingSets.get(editingExerciseId);
@@ -88,7 +99,7 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
 
   function bindRow(row, exercise) {
     row.addEventListener('pointerdown', (event) => {
-      if (event.target.closest('.exercise-edit-btn')) return;
+      if (event.target.closest('.exercise-edit-btn') || event.target.closest('.exercise-info-btn')) return;
       longPressFired = false;
       pressTimer = setTimeout(() => {
         longPressFired = true;
@@ -101,7 +112,7 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
     };
 
     row.addEventListener('pointerup', (event) => {
-      if (event.target.closest('.exercise-edit-btn')) return;
+      if (event.target.closest('.exercise-edit-btn') || event.target.closest('.exercise-info-btn')) return;
       clearTimeout(pressTimer);
       if (!longPressFired) {
         if (getEffective(exercise).reps == null) {
@@ -118,6 +129,14 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
       event.stopPropagation();
       openEditor(exercise);
     });
+
+    const infoBtn = row.querySelector('.exercise-info-btn');
+    if (infoBtn) {
+      infoBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        openInfoModal(exercise);
+      });
+    }
   }
 
   async function save() {
@@ -149,11 +168,12 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
     list.innerHTML = '';
 
     for (const exercise of exercises) {
+      const hasInfo = Object.prototype.hasOwnProperty.call(EXERCISE_DESCRIPTION_MAP, exercise.name);
       const row = document.createElement('div');
       row.className = 'exercise-row';
       row.innerHTML = `
         <div>
-          <div class="exercise-name">${exercise.name}</div>
+          <div class="exercise-name">${exercise.name}${hasInfo ? ' <button class="exercise-info-btn" type="button" aria-label="説明">ⓘ</button>' : ''}</div>
           <div class="exercise-last">${lastLabel(exercise)}</div>
         </div>
         <div class="exercise-row-actions">
@@ -169,6 +189,7 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
     document.getElementById('edit-ok-btn').onclick = applyEditorValue;
     document.getElementById('edit-remove-btn').onclick = decrementEditorCount;
     document.getElementById('edit-cancel-btn').onclick = closeEditor;
+    document.getElementById('exercise-info-close-btn').onclick = closeInfoModal;
   }
 
   return { render };

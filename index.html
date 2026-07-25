@@ -34,7 +34,7 @@
   </section>
 
   <section class="screen" id="screen-gym">
-    <p class="screen-hint">タップ=前回と同じセットを追加 / ✎ボタンか長押しで重さ・回数を編集、セットを取り消す</p>
+    <p class="screen-hint">タップ=前回と同じセットを追加 / ✎ボタンか長押しで重さ・回数を編集、セットを取り消す / ⓘマークで種目の説明</p>
     <div class="exercise-list" id="gym-exercise-list"></div>
     <button class="save-btn" id="gym-save-btn">ジムを記録して保存</button>
   </section>
@@ -62,7 +62,7 @@
   </section>
 
   <section class="screen" id="screen-hometrack">
-    <p class="screen-hint">タップ=前回と同じセットを追加 / ✎ボタンか長押しで回数を編集、セットを取り消す</p>
+    <p class="screen-hint">タップ=前回と同じセットを追加 / ✎ボタンか長押しで回数を編集、セットを取り消す / ⓘマークで種目の説明</p>
     <div class="exercise-list" id="hometrack-exercise-list"></div>
     <button class="save-btn" id="hometrack-save-btn">家トレを記録して保存</button>
   </section>
@@ -82,6 +82,14 @@
       <button class="modal-btn modal-btn--primary" id="edit-ok-btn">OK</button>
     </div>
     <button class="modal-btn modal-btn--cancel" id="edit-cancel-btn">キャンセル</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="exercise-info-modal-overlay">
+  <div class="modal">
+    <h2 id="exercise-info-title"></h2>
+    <p id="exercise-info-body"></p>
+    <button class="modal-btn modal-btn--primary" id="exercise-info-close-btn">閉じる</button>
   </div>
 </div>
 
