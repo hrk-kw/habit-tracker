@@ -1,0 +1,17 @@
+{
+  "name": "習慣トラッカー",
+  "short_name": "習慣",
+  "description": "ジム・自転車・家トレの3トラックを独立記録する習慣トラッカー",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1b1f24",
+  "theme_color": "#1b1f24",
+  "lang": "ja",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
