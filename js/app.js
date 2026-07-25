@@ -17,6 +17,7 @@ function router() {
   const hash = SCREENS[location.hash] ? location.hash : '#home';
   const target = SCREENS[hash];
 
+  document.querySelectorAll('.modal-overlay').forEach((el) => el.classList.remove('active'));
   document.querySelectorAll('.screen').forEach((el) => el.classList.remove('active'));
   document.getElementById(target.id).classList.add('active');
   document.getElementById('app-title').textContent = target.title;

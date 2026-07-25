@@ -104,7 +104,11 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
       if (event.target.closest('.exercise-edit-btn')) return;
       clearTimeout(pressTimer);
       if (!longPressFired) {
-        addSet(exercise);
+        if (getEffective(exercise).reps == null) {
+          openEditor(exercise);
+        } else {
+          addSet(exercise);
+        }
       }
     });
     row.addEventListener('pointerleave', cancelPress);
@@ -120,7 +124,12 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
     const date = todayStr();
     const entries = Array.from(pendingSets, ([exerciseId, { weightKg, reps, count }]) => (
       { exerciseId, weightKg, reps, count }
-    ));
+    )).filter((entry) => entry.count > 0);
+
+    if (entries.length === 0) {
+      window.alert('1つ以上セットを記録してください');
+      return;
+    }
 
     await saveSetSession(date, sessionType, entries);
     await badge.refresh();
@@ -147,8 +156,10 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
           <div class="exercise-name">${exercise.name}</div>
           <div class="exercise-last">${lastLabel(exercise)}</div>
         </div>
-        <button class="exercise-edit-btn" type="button" aria-label="編集">✎</button>
-        <div class="exercise-count-badge" data-exercise-id="${exercise.id}">0 セット</div>
+        <div class="exercise-row-actions">
+          <button class="exercise-edit-btn" type="button" aria-label="編集">✎</button>
+          <div class="exercise-count-badge" data-exercise-id="${exercise.id}">0 セット</div>
+        </div>
       `;
       bindRow(row, exercise);
       list.appendChild(row);

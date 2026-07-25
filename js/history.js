@@ -1,23 +1,11 @@
-import { getExercisesByCategory, getSetLogsByExercise, getRecentSessions } from './db.js';
+import { getExercisesByCategory, getRecentSetSessionsByExercise, getRecentSessions } from './db.js';
 
-const SET_LOGS_PER_EXERCISE = 5;
+const SESSIONS_PER_EXERCISE = 5;
 const SESSIONS_PER_TRACK = 10;
 
-function groupBySession(setLogs) {
-  const bySession = new Map();
-  for (const log of setLogs) {
-    const existing = bySession.get(log.session_id);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      bySession.set(log.session_id, { date: log.date, weightKg: log.weight_kg, reps: log.reps, count: 1 });
-    }
-  }
-  return Array.from(bySession.values());
-}
-
 function bikeSessionLabel(session) {
-  const modeLabel = session.bike_mode === 'gym_machine' ? 'ジムの固定バイク' : '実走';
+  const modeLabel = session.bike_mode === 'gym_machine' ? 'ジムの固定バイク'
+    : session.bike_mode === 'outdoor' ? '実走' : '不明';
   const parts = [modeLabel];
   if (session.duration_min != null) parts.push(`${session.duration_min}分`);
   if (session.distance_km != null) parts.push(`${session.distance_km}km`);
@@ -36,8 +24,7 @@ async function renderExerciseHistory(category, containerId, showWeight) {
 
   const exercises = await getExercisesByCategory(category);
   for (const exercise of exercises) {
-    const logs = await getSetLogsByExercise(exercise.id, SET_LOGS_PER_EXERCISE * 10);
-    const sessions = groupBySession(logs).slice(0, SET_LOGS_PER_EXERCISE);
+    const sessions = await getRecentSetSessionsByExercise(exercise.id, SESSIONS_PER_EXERCISE);
     if (sessions.length === 0) continue;
 
     const block = document.createElement('div');

@@ -167,6 +167,11 @@ main {
   touch-action: manipulation;
 }
 
+.exercise-row-actions {
+  display: flex;
+  align-items: center;
+}
+
 .exercise-name {
   font-size: 1rem;
 }
@@ -336,7 +341,7 @@ main {
 }
 
 .region-inactive {
-  fill: var(--surface);
+  fill: var(--bg);
   stroke: var(--text-dim);
   stroke-width: 1;
 }

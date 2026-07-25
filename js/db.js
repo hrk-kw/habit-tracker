@@ -61,21 +61,35 @@ export async function addSession(session) {
   return id;
 }
 
-export async function getSetLogsByExercise(exerciseId, limit) {
+// session_idごとに完全にグルーピングしてから件数を数える(setLogsの行数で打ち切ると
+// 最後のセッションだけセット数が過少になり得るため)。
+export async function getRecentSetSessionsByExercise(exerciseId, sessionLimit) {
   const db = await openDb();
   const tx = db.transaction('setLogs', 'readonly');
   const index = tx.objectStore('setLogs').index('exercise_id');
 
   return new Promise((resolve, reject) => {
-    const results = [];
+    const sessions = [];
+    const bySessionId = new Map();
     const cursorReq = index.openCursor(IDBKeyRange.only(exerciseId), 'prev');
     cursorReq.onsuccess = () => {
       const cursor = cursorReq.result;
-      if (!cursor || results.length >= limit) {
-        resolve(results);
+      if (!cursor) {
+        resolve(sessions);
         return;
       }
-      results.push(cursor.value);
+      const log = cursor.value;
+      let session = bySessionId.get(log.session_id);
+      if (!session) {
+        if (sessions.length >= sessionLimit) {
+          resolve(sessions);
+          return;
+        }
+        session = { date: log.date, weightKg: log.weight_kg, reps: log.reps, count: 0 };
+        bySessionId.set(log.session_id, session);
+        sessions.push(session);
+      }
+      session.count += 1;
       cursor.continue();
     };
     cursorReq.onerror = () => reject(cursorReq.error);
