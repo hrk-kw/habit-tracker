@@ -121,14 +121,14 @@ export async function getLatestSessionDate(type) {
 }
 
 // セッション作成・セットログ一括追加・前回値更新を1トランザクションで行う(途中失敗時に片方だけ残る不整合を防ぐ)。
-export async function saveGymSession(date, entries) {
+export async function saveSetSession(date, type, entries) {
   const db = await openDb();
   const tx = db.transaction(['sessions', 'setLogs', 'exercises'], 'readwrite');
   const sessionStore = tx.objectStore('sessions');
   const setLogStore = tx.objectStore('setLogs');
   const exerciseStore = tx.objectStore('exercises');
 
-  const sessionReq = sessionStore.add({ date, type: 'gym' });
+  const sessionReq = sessionStore.add({ date, type });
   sessionReq.onsuccess = () => {
     const sessionId = sessionReq.result;
     for (const { exerciseId, weightKg, reps, count } of entries) {

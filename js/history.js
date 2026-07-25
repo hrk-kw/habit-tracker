@@ -25,11 +25,16 @@ function bikeSessionLabel(session) {
   return parts.join(' / ');
 }
 
-async function renderGymHistory() {
-  const container = document.getElementById('history-gym');
+function entryLabel(session, showWeight) {
+  if (showWeight) return `${session.date}: ${session.weightKg}kg × ${session.reps}回 × ${session.count}セット`;
+  return `${session.date}: ${session.reps}回 × ${session.count}セット`;
+}
+
+async function renderExerciseHistory(category, containerId, showWeight) {
+  const container = document.getElementById(containerId);
   container.innerHTML = '';
 
-  const exercises = await getExercisesByCategory('outer');
+  const exercises = await getExercisesByCategory(category);
   for (const exercise of exercises) {
     const logs = await getSetLogsByExercise(exercise.id, SET_LOGS_PER_EXERCISE * 10);
     const sessions = groupBySession(logs).slice(0, SET_LOGS_PER_EXERCISE);
@@ -40,7 +45,7 @@ async function renderGymHistory() {
     block.innerHTML = `
       <div class="history-exercise-name">${exercise.name}</div>
       <ul class="history-entry-list">
-        ${sessions.map((s) => `<li>${s.date}: ${s.weightKg}kg × ${s.reps}回 × ${s.count}セット</li>`).join('')}
+        ${sessions.map((s) => `<li>${entryLabel(s, showWeight)}</li>`).join('')}
       </ul>
     `;
     container.appendChild(block);
@@ -60,15 +65,10 @@ async function renderBikeHistory() {
     : `<ul class="history-entry-list">${sessions.map((s) => `<li>${s.date}: ${bikeSessionLabel(s)}</li>`).join('')}</ul>`;
 }
 
-async function renderHomeHistory() {
-  const container = document.getElementById('history-home');
-  const sessions = await getRecentSessions('home', SESSIONS_PER_TRACK);
-
-  container.innerHTML = sessions.length === 0
-    ? '<p class="screen-hint">まだ記録がありません</p>'
-    : `<ul class="history-entry-list">${sessions.map((s) => `<li>${s.date}: ${s.note ?? ''}</li>`).join('')}</ul>`;
-}
-
 export async function render() {
-  await Promise.all([renderGymHistory(), renderBikeHistory(), renderHomeHistory()]);
+  await Promise.all([
+    renderExerciseHistory('outer', 'history-gym', true),
+    renderBikeHistory(),
+    renderExerciseHistory('inner', 'history-home', false),
+  ]);
 }
