@@ -329,3 +329,19 @@ main {
   color: var(--text-dim);
   padding: 0.5rem;
 }
+
+/* 筋肉部位可視化 */
+.region-active {
+  fill: var(--accent);
+}
+
+.region-inactive {
+  fill: var(--surface);
+  stroke: var(--text-dim);
+  stroke-width: 1;
+}
+
+.region-view-label {
+  fill: var(--text-dim);
+  font-size: 10px;
+}

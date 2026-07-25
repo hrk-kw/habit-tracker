@@ -5,6 +5,19 @@ export const TRACKS = [
   { id: 'home', type: 'home', label: '家トレ', hash: '#hometrack', green: 2, yellow: 4 },
 ];
 
+// ジム種目→鍛えた部位のマッピング(筋肉可視化用)。解剖学的な厳密さより「見て楽しい」ことを優先した粗い分類。
+export const EXERCISE_MUSCLE_MAP = {
+  'レッグプレス': ['legs', 'glutes'],
+  'チェストプレス': ['chest'],
+  'ラットプルダウン': ['back'],
+  'シーテッドロー': ['back'],
+  'レッグカール': ['hamstrings'],
+  'アブドミナルクランチ': ['abs'],
+  'ロータリートルソー': ['abs'],
+  'バックエクステンション': ['lower_back'],
+  'ショルダープレス': ['shoulders'],
+};
+
 // 初回seed用の固定メニュー。追加候補species も最初から含める(不要なら後でDB上で無効化可能)。
 export const INITIAL_EXERCISES = [
   { name: 'レッグプレス', category: 'outer', default_weight_kg: null, default_reps: null },

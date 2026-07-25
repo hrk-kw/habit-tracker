@@ -1,4 +1,5 @@
 import { createSetTracker } from './setTracker.js';
+import { showMuscleResult } from './muscle.js';
 
 const tracker = createSetTracker({
   listElementId: 'gym-exercise-list',
@@ -6,6 +7,7 @@ const tracker = createSetTracker({
   category: 'outer',
   sessionType: 'gym',
   showWeight: true,
+  onSaved: showMuscleResult,
 });
 
 export const render = tracker.render;

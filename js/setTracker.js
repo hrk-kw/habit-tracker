@@ -4,7 +4,7 @@ import * as badge from './badge.js';
 
 const LONG_PRESS_MS = 400;
 
-export function createSetTracker({ listElementId, saveButtonId, category, sessionType, showWeight }) {
+export function createSetTracker({ listElementId, saveButtonId, category, sessionType, showWeight, onSaved }) {
   let exercises = [];
   let pendingSets = new Map(); // exerciseId -> { weightKg, reps, count }
   let pressTimer = null;
@@ -124,7 +124,12 @@ export function createSetTracker({ listElementId, saveButtonId, category, sessio
 
     await saveSetSession(date, sessionType, entries);
     await badge.refresh();
-    location.hash = '#home';
+
+    if (onSaved) {
+      await onSaved({ exercises, entries });
+    } else {
+      location.hash = '#home';
+    }
   }
 
   async function render() {
