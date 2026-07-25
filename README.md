@@ -29,7 +29,7 @@ node icons/generate-icons.js
 
 ```sh
 gh repo create habit-tracker --public --source=. --push
-gh api -X POST repos/:owner/habit-tracker/pages -f source.branch=main -f source.path=/
+echo '{"source":{"branch":"main","path":"/"}}' | gh api -X POST repos/:owner/habit-tracker/pages --input -
 ```
 
 数十秒後に `https://<user>.github.io/habit-tracker/` で公開される。スマホのChromeで開き「ホーム画面に追加」でPWAとしてインストールできる。
