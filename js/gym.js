@@ -83,7 +83,8 @@ function decrementEditorCount() {
 }
 
 function bindRow(row, exercise) {
-  row.addEventListener('pointerdown', () => {
+  row.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('.exercise-edit-btn')) return;
     longPressFired = false;
     pressTimer = setTimeout(() => {
       longPressFired = true;
@@ -95,7 +96,8 @@ function bindRow(row, exercise) {
     clearTimeout(pressTimer);
   };
 
-  row.addEventListener('pointerup', () => {
+  row.addEventListener('pointerup', (event) => {
+    if (event.target.closest('.exercise-edit-btn')) return;
     clearTimeout(pressTimer);
     if (!longPressFired) {
       addSet(exercise);
@@ -103,6 +105,11 @@ function bindRow(row, exercise) {
   });
   row.addEventListener('pointerleave', cancelPress);
   row.addEventListener('pointercancel', cancelPress);
+
+  row.querySelector('.exercise-edit-btn').addEventListener('click', (event) => {
+    event.stopPropagation();
+    openEditor(exercise);
+  });
 }
 
 async function save() {
@@ -131,6 +138,7 @@ export async function render() {
         <div class="exercise-name">${exercise.name}</div>
         <div class="exercise-last">${lastLabel(exercise)}</div>
       </div>
+      <button class="exercise-edit-btn" type="button" aria-label="編集">✎</button>
       <div class="exercise-count-badge" data-exercise-id="${exercise.id}">0 セット</div>
     `;
     bindRow(row, exercise);
