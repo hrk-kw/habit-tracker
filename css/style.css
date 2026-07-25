@@ -254,6 +254,10 @@ main {
   color: var(--text-dim);
 }
 
+.field-label.hidden {
+  display: none;
+}
+
 .field-label input {
   padding: 0.7rem;
   border-radius: 8px;
